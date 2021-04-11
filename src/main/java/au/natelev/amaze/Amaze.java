@@ -1,10 +1,14 @@
 package au.natelev.amaze;
 
+import au.natelev.amaze.game.Game;
 import au.natelev.amaze.setup.Registration;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -17,24 +21,27 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.stream.Collectors;
 
 @Mod(Amaze.MOD_ID)
 public class Amaze {
     public static final String MOD_ID = "amaze";
-    public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+    public final IEventBus MOD_EVENT_BUS;
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private Game game;
 
     public Amaze() {
+        MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+
         Registration.register();
 
         MOD_EVENT_BUS.addListener(this::setup);
         MOD_EVENT_BUS.addListener(this::enqueueIMC);
         MOD_EVENT_BUS.addListener(this::processIMC);
         MOD_EVENT_BUS.addListener(this::doClientStuff);
-
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -63,6 +70,7 @@ public class Amaze {
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         LOGGER.info("HELLO from server starting");
+        game = new Game(event.getServer());
     }
 
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
@@ -70,6 +78,29 @@ public class Amaze {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             LOGGER.info("HELLO from Register Block");
+        }
+    }
+
+
+    @SubscribeEvent
+    public void onKeyInput(final InputEvent.KeyInputEvent event) {
+        switch (event.getKey()) {
+//            case GLFW.GLFW_KEY_W:
+            case GLFW.GLFW_KEY_UP:
+                game.moveUp();
+                break;
+//            case GLFW.GLFW_KEY_S:
+            case GLFW.GLFW_KEY_DOWN:
+                game.moveDown();
+                break;
+//            case GLFW.GLFW_KEY_A:
+            case GLFW.GLFW_KEY_LEFT:
+                game.moveLeft();
+                break;
+//            case GLFW.GLFW_KEY_D:
+            case GLFW.GLFW_KEY_RIGHT:
+                game.moveRight();
+                break;
         }
     }
 }
