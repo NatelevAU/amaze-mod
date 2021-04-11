@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.16.5-1.0'
 group = 'au.natelev.amaze' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'amaze'
 
@@ -99,7 +99,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'amaze', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'amaze', '--all',
+                '--existing', file('src/main/resources/').toString(),
+                '--existing', file('src/generated/resources/').toString(),
+                '--output', file('src/generated/resources/')
 
             mods {
                 amaze {
