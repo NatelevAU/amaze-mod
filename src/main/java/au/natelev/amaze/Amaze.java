@@ -1,5 +1,6 @@
 package au.natelev.amaze;
 
+import au.natelev.amaze.setup.Registration;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,12 +19,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
-@Mod("amaze")
+@Mod(Amaze.MOD_ID)
 public class Amaze
 {
+    public static final String MOD_ID = "amaze";
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     public Amaze() {
+        Registration.register();
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
