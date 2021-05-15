@@ -101,6 +101,9 @@ public class Amaze {
             case GLFW.GLFW_KEY_RIGHT:
                 game.moveRight();
                 break;
+            case GLFW.GLFW_KEY_Z:
+                game.reset();
+                break;
         }
     }
 }

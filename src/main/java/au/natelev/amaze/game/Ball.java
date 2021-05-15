@@ -24,10 +24,10 @@ public class Ball {
     public void setCurrPos(int x, int y, int z) { setCurrPos(new BlockPos(x, y, z)); }
     public void setCurrPos(BlockPos pos) { currPos = pos; }
 
-    public void moveUp() { while (move(currPos.north())); }
-    public void moveDown() { while (move(currPos.south())); }
-    public void moveLeft() { while (move(currPos.west())); }
-    public void moveRight() { while (move(currPos.east())); }
+    public void moveUp() { while (move(currPos.south())); }
+    public void moveDown() { while (move(currPos.north())); }
+    public void moveLeft() { while (move(currPos.east())); }
+    public void moveRight() { while (move(currPos.west())); }
 
     private boolean move(BlockPos newPos) {
         if (world.getBlockState(newPos).getBlock().equals(Blocks.AIR)) {

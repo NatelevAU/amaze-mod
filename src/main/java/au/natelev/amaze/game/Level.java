@@ -7,11 +7,17 @@ public class Level {
     private final int width;
     private final int height;
     private Tile startTile;
+    private int[][] tileMap;
     private final List<Tile> unpaintedTiles = new ArrayList<>();
 
     public Level(int width, int height) {
         this.width = width;
         this.height = height;
+    }
+
+    public Level setTiles(int[][] tileMap) {
+        this.tileMap = tileMap;
+        return this;
     }
 
     public Tile getStartTile() { return startTile; }
