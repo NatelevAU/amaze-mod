@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    protected final MinecraftServer server;
-    protected final ServerWorld serverWorld;
-    protected Ball ball;
+    private final MinecraftServer server;
+    private final ServerWorld serverWorld;
+    private Ball ball;
 
     private final List<Level> levels = new ArrayList<>();
     private Level currLevel;
+
+    private final BlockPos gameOrigin = new BlockPos(0, 65, 0);
 
     public Game(MinecraftServer server) {
         this.server = server;
@@ -23,14 +25,18 @@ public class Game {
     }
 
     private void initLevels(List<Level> levels) {
-        Level firstLevel = new Level(6, 6);
+        Level firstLevel = new Level(6, 6, gameOrigin);
         int[][] firstLevelMap = {{0,0,0,0,0,0}, {0,2,1,1,2,0}, {0,1,0,0,1,0}, {0,1,0,0,1,0}, {0,1,1,1,2,0}, {0,0,0,0,0,0}};
         firstLevel.setTiles(firstLevelMap);
         levels.add(firstLevel); // add first level
+
         // TODO Init levels
 
         currLevel = levels.get(0);
         ball = new Ball(currLevel, serverWorld, new BlockPos(1, 65, -2));
+
+        // Build first level
+        firstLevel.buildMap(serverWorld, 0, 0);
     }
 
     public void moveUp() { ball.moveUp(); }
