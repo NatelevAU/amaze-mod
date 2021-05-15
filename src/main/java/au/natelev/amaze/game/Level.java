@@ -49,20 +49,25 @@ public class Level {
                         currPos.offset(0, 0, height - heightDiff);
                         continue;
                     }
-                    this.buildTile(serverWorld, currPos, tileMap[i][j]);
+                    this.buildTile(serverWorld, currPos, 1);
                     currPos.offset(0, 0, 1);
                 }
-                currPos.offset(1, 0, -prevHeight);
+                currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
             }
         }
 
+        return resetMap(serverWorld);
+    }
+
+    protected Level resetMap(ServerWorld serverWorld) {
         BlockPos currPos = levelOrigin;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 this.buildTile(serverWorld, currPos, tileMap[i][j]);
+                this.buildTile(serverWorld, currPos.below(), -1);
                 currPos.offset(0, 0, 1);
             }
-            currPos.offset(1, 0, -height);
+            currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
         }
         return this;
     }
@@ -71,10 +76,21 @@ public class Level {
 
     private void buildTile(ServerWorld serverWorld, BlockPos pos, int tileState) {
         final BlockState block;
-        if (tileState == 0) {
-            block = Blocks.WHITE_CONCRETE.defaultBlockState();
-            serverWorld.setBlockAndUpdate(pos, block);
+        switch (tileState) {
+            case -1:
+                block = Blocks.BLACK_CONCRETE.defaultBlockState();
+                break;
+            case 0:
+                block = Blocks.WHITE_CONCRETE.defaultBlockState();
+                break;
+            case 1:
+            case 2:
+                block = Blocks.AIR.defaultBlockState();
+                break;
+            default:
+                return;
         }
+        serverWorld.setBlockAndUpdate(pos, block);
     }
 
     private BlockPos getLevelOrigin(int width, int y, int height) {

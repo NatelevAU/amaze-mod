@@ -46,16 +46,17 @@ public class Game {
 
     public void reset() {
         BlockPos currPos = new BlockPos(1, 64, -1);
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.south();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.south();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
-        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
+        currLevel.resetMap(serverWorld);
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.south();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.south();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.west();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.north();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
+//        serverWorld.setBlockAndUpdate(currPos, Blocks.BLACK_CONCRETE.defaultBlockState()); currPos = currPos.east();
     }
 }
