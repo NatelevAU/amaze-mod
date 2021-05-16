@@ -28,12 +28,18 @@ public class Game {
     }
 
     private void initLevels(ServerWorld serverWorld) {
-        Level firstLevel = new Level(serverWorld,6, 6, gameOrigin);
-        int[][] firstLevelMap = {{0,0,0,0,0,0}, {0,2,1,1,2,0}, {0,1,0,0,1,0}, {0,1,0,0,1,0}, {0,1,1,1,2,0}, {0,0,0,0,0,0}};
-        firstLevel.setTiles(firstLevelMap);
-        levels.add(firstLevel); // add first level
+//        Level firstLevel = new Level(serverWorld,6, 6, gameOrigin);
+//        int[][] firstLevelMap = {{0,0,0,0,0,0}, {0,2,1,1,2,0}, {0,1,0,0,1,0}, {0,1,0,0,1,0}, {0,1,1,1,2,0}, {0,0,0,0,0,0}};
+//        firstLevel.setTiles(firstLevelMap);
+//        levels.add(firstLevel); // add first level
 
-        // TODO Init all levels
+        for (int i = 0; i < LevelData.levelMap.length; i++) {
+            int[] metadata = LevelData.levelMetadata[i];
+            int[][] map = LevelData.levelMap[i];
+            Level level = new Level(serverWorld, metadata[0], metadata[1], gameOrigin);
+            level.setTiles(map);
+            levels.add(level);
+        }
     }
 
     private void setLevel(Level level) {

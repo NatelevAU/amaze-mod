@@ -50,11 +50,11 @@ public class Level {
 
     protected void resetTiles() {
         unpaintedTiles.clear();
-        BlockPos tilePos = null;
-        for (int i = 0; i < width; i++) {
+        BlockPos tilePos;
+        for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tileMap[i][j] > 0)  {
-                    tilePos = levelOrigin.offset(i, 0, j);
+                if (tileMap[width-i-1][height-j-1] > 0)  {
+                    tilePos = levelOrigin.offset(j, 0, i);
                     unpaintedTiles.add(tilePos);
                 }
             }
@@ -85,11 +85,11 @@ public class Level {
         BlockPos currPos = levelOrigin;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                buildTile(currPos, tileMap[i][j]);
+                buildTile(currPos, tileMap[width-i-1][height-j-1]);
                 buildTile(currPos.below(), -1);
-                currPos = currPos.offset(0, 0, 1);
+                currPos = currPos.offset(1, 0, 0);
             }
-            currPos = currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
+            currPos = currPos.offset(levelOrigin.getX() - currPos.getX(), 0, 1);
         }
         resetTiles();
     }

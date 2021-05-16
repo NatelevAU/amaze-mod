@@ -14,9 +14,6 @@ public class Ball {
 
     public Ball(ServerWorld serverWorld) {
         this.serverWorld = serverWorld;
-//        ballEntity = EntityType.BOAT.create(world);
-//        world.addFreshEntity(ballEntity);
-//        ballEntity.moveTo(currPos, 0, 0);
     }
 
     protected void moveDir(int dir) {
@@ -46,7 +43,7 @@ public class Ball {
 
     protected void setLevel(Level level) {
         this.inLevel = level;
-        this.ballOrigin = level.getOrigin().offset(1, 0, 1);
+        this.ballOrigin = level.getOrigin().offset(level.getWidth() - 2, 0, 1);
         reset();
     }
 

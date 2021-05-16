@@ -79,29 +79,28 @@ public class Amaze {
 
     @SubscribeEvent
     public void onKeyInput(final InputEvent.KeyInputEvent event) {
-        if (event.getAction() != GLFW.GLFW_PRESS) {
-            return;
-        }
-        switch (event.getKey()) {
+        if (event.getAction() == GLFW.GLFW_PRESS) {
+            switch (event.getKey()) {
 //            case GLFW.GLFW_KEY_W:
-            case GLFW.GLFW_KEY_UP:
-                game.moveUp();
-                break;
+                case GLFW.GLFW_KEY_UP:
+                    game.moveUp();
+                    break;
 //            case GLFW.GLFW_KEY_S:
-            case GLFW.GLFW_KEY_DOWN:
-                game.moveDown();
-                break;
+                case GLFW.GLFW_KEY_DOWN:
+                    game.moveDown();
+                    break;
 //            case GLFW.GLFW_KEY_A:
-            case GLFW.GLFW_KEY_LEFT:
-                game.moveLeft();
-                break;
+                case GLFW.GLFW_KEY_LEFT:
+                    game.moveLeft();
+                    break;
 //            case GLFW.GLFW_KEY_D:
-            case GLFW.GLFW_KEY_RIGHT:
-                game.moveRight();
-                break;
-            case GLFW.GLFW_KEY_Z:
-                game.reset();
-                break;
+                case GLFW.GLFW_KEY_RIGHT:
+                    game.moveRight();
+                    break;
+                case GLFW.GLFW_KEY_Z:
+                    game.reset();
+                    break;
+            }
         }
     }
 }
