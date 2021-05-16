@@ -9,17 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
+    private final ServerWorld serverWorld;
     private final int width;
     private final int height;
-    private int[][] tileMap;
+    private int[][] tileMap = null;
 
     private final BlockPos gameOrigin;
     private final BlockPos levelOrigin;
 
-    private Tile startTile;
-    private final List<Tile> unpaintedTiles = new ArrayList<>();
+    private final List<BlockPos> unpaintedTiles = new ArrayList<>();
 
-    public Level(int width, int height, BlockPos gameOrigin) {
+    public Level(ServerWorld serverWorld, int width, int height, BlockPos gameOrigin) {
+        this.serverWorld = serverWorld;
         this.width = width;
         this.height = height;
         this.gameOrigin = gameOrigin;
@@ -30,15 +31,37 @@ public class Level {
 
     protected int getWidth() { return this.width; }
     protected int getHeight() { return this.height; }
+    protected BlockPos getOrigin() { return this.levelOrigin; }
 
 
 
-    protected Level setTiles(int[][] tileMap) {
-        this.tileMap = tileMap;
-        return this;
+    protected void paint(BlockPos blockPos) {
+        unpaintedTiles.remove(blockPos);
     }
 
-    protected Level buildMap(ServerWorld serverWorld, int prevWidth, int prevHeight) {
+    protected boolean isFinished() {
+        return unpaintedTiles.isEmpty();
+    }
+
+    protected void setTiles(int[][] tileMap) {
+        this.tileMap = tileMap;
+        resetTiles();
+    }
+
+    protected void resetTiles() {
+        unpaintedTiles.clear();
+        BlockPos tilePos = null;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < width; j++) {
+                if (tileMap[i][j] > 0)  {
+                    tilePos = levelOrigin.offset(i, 0, j);
+                    unpaintedTiles.add(tilePos);
+                }
+            }
+        }
+    }
+
+    protected void buildMap(int prevWidth, int prevHeight) {
         if (prevWidth > width || prevHeight > height) {
             int heightDiff = prevHeight - height;
             BlockPos currPos = getLevelOrigin(prevWidth, -1, prevHeight);
@@ -46,35 +69,34 @@ public class Level {
                 for (int j = 0; j < prevHeight; j++) {
                     if (j == heightDiff) {
                         j += height - heightDiff;
-                        currPos.offset(0, 0, height - heightDiff);
+                        currPos = currPos.offset(0, 0, height - heightDiff);
                         continue;
                     }
-                    this.buildTile(serverWorld, currPos, 1);
-                    currPos.offset(0, 0, 1);
+                    buildTile(currPos, 1);
+                    currPos = currPos.offset(0, 0, 1);
                 }
-                currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
+                currPos = currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
             }
         }
-
-        return resetMap(serverWorld);
+        resetMap();
     }
 
-    protected Level resetMap(ServerWorld serverWorld) {
+    protected void resetMap() {
         BlockPos currPos = levelOrigin;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                this.buildTile(serverWorld, currPos, tileMap[i][j]);
-                this.buildTile(serverWorld, currPos.below(), -1);
-                currPos.offset(0, 0, 1);
+                buildTile(currPos, tileMap[i][j]);
+                buildTile(currPos.below(), -1);
+                currPos = currPos.offset(0, 0, 1);
             }
-            currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
+            currPos = currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
         }
-        return this;
+        resetTiles();
     }
 
 
 
-    private void buildTile(ServerWorld serverWorld, BlockPos pos, int tileState) {
+    private void buildTile(BlockPos pos, int tileState) {
         final BlockState block;
         switch (tileState) {
             case -1:

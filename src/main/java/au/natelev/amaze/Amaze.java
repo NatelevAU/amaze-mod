@@ -1,14 +1,11 @@
 package au.natelev.amaze;
 
 import au.natelev.amaze.game.Game;
-import au.natelev.amaze.setup.Registration;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -35,8 +32,6 @@ public class Amaze {
 
     public Amaze() {
         MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
-
-        Registration.register();
 
         MOD_EVENT_BUS.addListener(this::setup);
         MOD_EVENT_BUS.addListener(this::enqueueIMC);
@@ -84,6 +79,9 @@ public class Amaze {
 
     @SubscribeEvent
     public void onKeyInput(final InputEvent.KeyInputEvent event) {
+        if (event.getAction() != GLFW.GLFW_PRESS) {
+            return;
+        }
         switch (event.getKey()) {
 //            case GLFW.GLFW_KEY_W:
             case GLFW.GLFW_KEY_UP:
