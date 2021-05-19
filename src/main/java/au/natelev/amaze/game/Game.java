@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Game {
     private final Ball ball;
+    private final ServerWorld serverWorld;
 
     private final List<Level> levels = new ArrayList<>();
     private Level currLevel = null;
@@ -22,43 +23,57 @@ public class Game {
     protected static final int RIGHT = 3;
 
     public Game(MinecraftServer server) {
-        initLevels(server.overworld());
+        this.serverWorld = server.overworld();
+//        initLevels(server.overworld());
         ball = new Ball(server.overworld());
-        setLevel(levels.get(0));
+        setLevel(server.overworld(), 0);
     }
 
     private void initLevels(ServerWorld serverWorld) {
-//        Level firstLevel = new Level(serverWorld,6, 6, gameOrigin);
-//        int[][] firstLevelMap = {{0,0,0,0,0,0}, {0,2,1,1,2,0}, {0,1,0,0,1,0}, {0,1,0,0,1,0}, {0,1,1,1,2,0}, {0,0,0,0,0,0}};
-//        firstLevel.setTiles(firstLevelMap);
-//        levels.add(firstLevel); // add first level
-
-        for (int i = 0; i < LevelData.levelMap.length; i++) {
+        for (int i = 0; i < 104; i++) {
             int[] metadata = LevelData.levelMetadata[i];
-            int[][] map = LevelData.levelMap[i];
-            Level level = new Level(serverWorld, metadata[0], metadata[1], gameOrigin);
+            int[][] map = LevelData.getLevelMap(i);
+            Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
             level.setTiles(map);
             levels.add(level);
         }
     }
 
     private void setLevel(Level level) {
-        int prevWidth = 0, prevHeight = 0;
+        int prevHeight = 20, prevWidth = 20;
         if (currLevel != null) {
-            prevWidth = currLevel.getWidth();
             prevHeight = currLevel.getHeight();
+            prevWidth = currLevel.getWidth();
         }
         currLevel = level;
-        level.buildMap(prevWidth, prevHeight);
+        level.buildMap(prevHeight, prevWidth);
+        ball.setLevel(level);
+    }
+
+    private void setLevel(ServerWorld serverWorld, int levelIndex) {
+        int prevHeight = 20, prevWidth = 20;
+        if (currLevel != null) {
+            prevHeight = currLevel.getHeight();
+            prevWidth = currLevel.getWidth();
+        }
+        int[] metadata = LevelData.levelMetadata[levelIndex];
+        int[][] map = LevelData.getLevelMap(levelIndex);
+        Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
+        level.setTiles(map);
+        levels.add(level);
+        currLevel = level;
+        level.buildMap(prevHeight, prevWidth);
         ball.setLevel(level);
     }
 
     private void nextLevel() {
         this.currLevelIndex++;
-        if (currLevelIndex >= levels.size())  {
-            currLevelIndex = 0;
+        if (currLevelIndex > 5)  {
+            currLevelIndex--;
+            reset();
+        } else {
+            setLevel(serverWorld, currLevelIndex);
         }
-        setLevel(levels.get(currLevelIndex));
     }
 
     private void move(int dir) {

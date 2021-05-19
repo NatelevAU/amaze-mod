@@ -43,7 +43,7 @@ public class Ball {
 
     protected void setLevel(Level level) {
         this.inLevel = level;
-        this.ballOrigin = level.getOrigin().offset(level.getWidth() - 2, 0, 1);
+        this.ballOrigin = level.getOrigin().offset(level.getHeight() - 2, 0, 1);
         reset();
     }
 
