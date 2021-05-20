@@ -31,7 +31,6 @@ public class Level {
 
     protected int getHeight() { return this.height; }
     protected int getWidth() { return this.width; }
-    protected BlockPos getOrigin() { return this.levelOrigin; }
 
 
 
@@ -41,6 +40,18 @@ public class Level {
 
     protected boolean isFinished() {
         return unpaintedTiles.isEmpty();
+    }
+
+    protected BlockPos getBallOrigin() {
+        for (int i = 0; i < height; i++) {
+            for (int j = width; j > 0;) {
+                j--;
+                if (tileMap[height -i-1][width -j-1] > 0) {
+                    return levelOrigin.offset(j, 0, i);
+                }
+            }
+        }
+        return null;
     }
 
     protected void setTiles(int[][] tileMap) {

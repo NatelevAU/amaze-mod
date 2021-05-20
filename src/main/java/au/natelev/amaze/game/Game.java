@@ -24,38 +24,12 @@ public class Game {
 
     public Game(MinecraftServer server) {
         this.serverWorld = server.overworld();
-//        initLevels(server.overworld());
         ball = new Ball(server.overworld());
         setLevel(server.overworld(), 0);
     }
 
-    private void initLevels(ServerWorld serverWorld) {
-        for (int i = 0; i < 104; i++) {
-            int[] metadata = LevelData.levelMetadata[i];
-            int[][] map = LevelData.getLevelMap(i);
-            Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
-            level.setTiles(map);
-            levels.add(level);
-        }
-    }
-
-    private void setLevel(Level level) {
-        int prevHeight = 20, prevWidth = 20;
-        if (currLevel != null) {
-            prevHeight = currLevel.getHeight();
-            prevWidth = currLevel.getWidth();
-        }
-        currLevel = level;
-        level.buildMap(prevHeight, prevWidth);
-        ball.setLevel(level);
-    }
-
     private void setLevel(ServerWorld serverWorld, int levelIndex) {
         int prevHeight = 30, prevWidth = 30;
-        if (currLevel != null) {
-            prevHeight = currLevel.getHeight();
-            prevWidth = currLevel.getWidth();
-        }
         int[] metadata = LevelData.levelMetadata[levelIndex];
         int[][] map = LevelData.getLevelMap(levelIndex);
         Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
