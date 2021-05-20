@@ -51,7 +51,7 @@ public class Game {
     }
 
     private void setLevel(ServerWorld serverWorld, int levelIndex) {
-        int prevHeight = 20, prevWidth = 20;
+        int prevHeight = 30, prevWidth = 30;
         if (currLevel != null) {
             prevHeight = currLevel.getHeight();
             prevWidth = currLevel.getWidth();
@@ -68,7 +68,7 @@ public class Game {
 
     private void nextLevel() {
         this.currLevelIndex++;
-        if (currLevelIndex > 5)  {
+        if (currLevelIndex > 103)  {
             currLevelIndex--;
             reset();
         } else {

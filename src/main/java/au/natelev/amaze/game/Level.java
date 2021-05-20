@@ -63,19 +63,22 @@ public class Level {
 
     protected void buildMap(int prevHeight, int prevWidth) {
         if (prevHeight > height || prevWidth > width) {
+            int heightDiff = prevHeight - height;
             int widthDiff = prevWidth - width;
-            BlockPos currPos = getLevelOrigin(prevHeight, -1, prevWidth);
+            BlockPos origin = getLevelOrigin(prevHeight, -1, prevWidth);
+            BlockPos currPos = origin;
             for (int i = 0; i < prevHeight; i++) {
                 for (int j = 0; j < prevWidth; j++) {
-                    if (j == widthDiff) {
-                        j += width - widthDiff;
-                        currPos = currPos.offset(0, 0, width - widthDiff);
+                    if (j == widthDiff && (i >= heightDiff && i <= prevHeight - heightDiff)) {
+                        j += prevWidth - (2 * widthDiff);
+                        currPos = currPos.offset(0, 0, prevWidth - (2 * widthDiff));
                         continue;
                     }
-                    buildTile(currPos, 1);
+                    buildTile(currPos, -1);
+                    buildTile(currPos.above(), 0);
                     currPos = currPos.offset(0, 0, 1);
                 }
-                currPos = currPos.offset(1, 0, levelOrigin.getZ() - currPos.getZ());
+                currPos = currPos.offset(1, 0, origin.getZ() - currPos.getZ());
             }
         }
         resetMap();
