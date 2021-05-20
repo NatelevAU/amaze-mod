@@ -3,9 +3,13 @@ package au.natelev.amaze;
 import au.natelev.amaze.game.Game;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -104,5 +108,19 @@ public class Amaze {
                     game.reset();
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerJoin(final PlayerEvent.PlayerLoggedInEvent event) {
+        event.getPlayer().teleportTo(0, 79, 0);
+    }
+
+    @SubscribeEvent
+    public void onPlayerMove(final LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntityLiving() == null || !(event.getEntityLiving() instanceof PlayerEntity))
+            return;
+//        PlayerEntity player = (PlayerEntity) event.getEntity();
+        // only make event cancellable if player is moving
+        event.setCanceled(true);
     }
 }

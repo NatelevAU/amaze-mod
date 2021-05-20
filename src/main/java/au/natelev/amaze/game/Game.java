@@ -42,7 +42,7 @@ public class Game {
 
     private void setLevel(ServerWorld serverWorld, int levelIndex) {
         this.currLevelIndex = levelIndex;
-        int prevHeight = 30, prevWidth = 30;
+        int prevHeight = 50, prevWidth = 50;
         int[] metadata = LevelData.levelMetadata[levelIndex];
         int[][] map = LevelData.getLevelMap(levelIndex);
         Level level = levels.get(levelIndex);
