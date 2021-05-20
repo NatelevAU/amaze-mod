@@ -1,5 +1,6 @@
 package au.natelev.amaze.game;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -25,19 +26,47 @@ public class Game {
     public Game(MinecraftServer server) {
         this.serverWorld = server.overworld();
         ball = new Ball(server.overworld());
-        setLevel(server.overworld(), 0);
+        initLevels(levels);
+        setLevel(server.overworld(), getLevelBlock(server.overworld()));
+    }
+
+    private void initLevels(List<Level> levels) {
+        for (int i = 0; i < 104; i++) {
+            int[] metadata = LevelData.levelMetadata[i];
+            int[][] map = LevelData.getLevelMap(i);
+            Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
+            level.setTiles(map);
+            levels.add(level);
+        }
     }
 
     private void setLevel(ServerWorld serverWorld, int levelIndex) {
+        this.currLevelIndex = levelIndex;
         int prevHeight = 30, prevWidth = 30;
         int[] metadata = LevelData.levelMetadata[levelIndex];
         int[][] map = LevelData.getLevelMap(levelIndex);
-        Level level = new Level(serverWorld, metadata[1], metadata[0], gameOrigin);
-        level.setTiles(map);
-        levels.add(level);
+        Level level = levels.get(levelIndex);
         currLevel = level;
         level.buildMap(prevHeight, prevWidth);
         ball.setLevel(level);
+        setLevelBlock(serverWorld, levelIndex);
+    }
+
+    private void setLevelBlock(ServerWorld serverWorld, int levelIndex) {
+        serverWorld.setBlockAndUpdate(new BlockPos(getLevelBlock(serverWorld), 0, 0), Blocks.AIR.defaultBlockState());
+        serverWorld.setBlockAndUpdate(new BlockPos(levelIndex-1, 0, 0), Blocks.AIR.defaultBlockState());
+        serverWorld.setBlockAndUpdate(new BlockPos(levelIndex, 0, 0), Blocks.STONE.defaultBlockState());
+    }
+
+    private int getLevelBlock(ServerWorld serverWorld) {
+        BlockPos currPos = new BlockPos(0, 0, 0);
+        for (int i = 0; i < 104; i++) {
+            if (serverWorld.getBlockState(currPos).getBlock().equals(Blocks.STONE))
+                return i;
+            currPos = currPos.offset(1, 0, 0);
+        }
+        serverWorld.setBlockAndUpdate(new BlockPos(0, 0, 0), Blocks.STONE.defaultBlockState());
+        return 0;
     }
 
     private void nextLevel() {
@@ -63,6 +92,12 @@ public class Game {
     public void moveRight() { move(RIGHT); }
 
     public void reset() {
+        currLevelIndex = 0;
+        setLevel(serverWorld,0);
+        resetLevel();
+    }
+
+    public void resetLevel() {
         currLevel.resetMap();
         ball.reset();
     }

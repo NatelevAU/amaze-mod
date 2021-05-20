@@ -98,8 +98,10 @@ public class Amaze {
                     game.moveRight();
                     break;
                 case GLFW.GLFW_KEY_Z:
-                    game.reset();
+                    game.resetLevel();
                     break;
+                case GLFW.GLFW_KEY_R:
+                    game.reset();
             }
         }
     }

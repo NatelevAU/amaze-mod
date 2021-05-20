@@ -130,6 +130,6 @@ public class Level {
     }
 
     private BlockPos getLevelOrigin(int height, int y, int width) {
-        return new BlockPos(gameOrigin.getX() - height/2, gameOrigin.getY() + y, gameOrigin.getZ() - width/2);
+        return new BlockPos(gameOrigin.getX() - width/2, gameOrigin.getY() + y, gameOrigin.getZ() - height/2);
     }
 }
