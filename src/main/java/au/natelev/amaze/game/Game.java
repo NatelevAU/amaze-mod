@@ -1,8 +1,14 @@
 package au.natelev.amaze.game;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.*;
+import net.minecraft.world.BossInfo;
+import net.minecraft.world.server.ServerBossInfo;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.ArrayList;
@@ -11,10 +17,12 @@ import java.util.List;
 public class Game {
     private final Ball ball;
     private final ServerWorld serverWorld;
+    private final ServerBossInfo bossBar;
 
     private final List<Level> levels = new ArrayList<>();
     private Level currLevel = null;
     private int currLevelIndex = 0;
+    private boolean wonLevel = false;
 
     private final BlockPos gameOrigin = new BlockPos(0, 65, 0);
 
@@ -25,9 +33,21 @@ public class Game {
 
     public Game(MinecraftServer server) {
         this.serverWorld = server.overworld();
-        ball = new Ball(server.overworld());
+        this.ball = new Ball(server.overworld());
+        this.bossBar = new ServerBossInfo(
+                new StringTextComponent("Level " + Integer.toString(currLevelIndex + 1)),
+                BossInfo.Color.BLUE, BossInfo.Overlay.byName("Level"));
+        bossBar.setVisible(true);
         initLevels(levels);
         setLevel(server.overworld(), getLevelBlock(server.overworld()));
+    }
+
+    public void addPlayer(ServerPlayerEntity player) {
+        bossBar.addPlayer(player);
+    }
+
+    private void bossBarSetLevel(int levelIndex) {
+        bossBar.setName(new StringTextComponent("Level " + Integer.toString(levelIndex + 1)));
     }
 
     private void initLevels(List<Level> levels) {
@@ -40,8 +60,11 @@ public class Game {
         }
     }
 
+    public boolean isLevelWon() { return wonLevel; }
+
     private void setLevel(ServerWorld serverWorld, int levelIndex) {
         this.currLevelIndex = levelIndex;
+        bossBarSetLevel(levelIndex);
         int prevHeight = 50, prevWidth = 50;
         int[] metadata = LevelData.levelMetadata[levelIndex];
         int[][] map = LevelData.getLevelMap(levelIndex);
@@ -70,19 +93,29 @@ public class Game {
     }
 
     private void nextLevel() {
+        if (isLevelWon()) return;
+        wonLevel = true;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        wonLevel = false;
         this.currLevelIndex++;
         if (currLevelIndex > 103)  {
             currLevelIndex--;
-            reset();
+            resetLevel();
         } else {
             setLevel(serverWorld, currLevelIndex);
         }
     }
 
     private void move(int dir) {
+        if (isLevelWon()) return;
         ball.moveDir(dir);
         if (currLevel.isFinished()) {
-            nextLevel();
+            Thread thread = new Thread(this::nextLevel);
+            thread.start();
         }
     }
 
@@ -92,12 +125,14 @@ public class Game {
     public void moveRight() { move(RIGHT); }
 
     public void reset() {
+        if (isLevelWon()) return;
         currLevelIndex = 0;
         setLevel(serverWorld,0);
         resetLevel();
     }
 
     public void resetLevel() {
+        if (isLevelWon()) return;
         currLevel.resetMap();
         ball.reset();
     }

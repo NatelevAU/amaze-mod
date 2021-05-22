@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Mod(Amaze.MOD_ID)
@@ -83,7 +84,7 @@ public class Amaze {
 
     @SubscribeEvent
     public void onKeyInput(final InputEvent.KeyInputEvent event) {
-        if (event.getAction() == GLFW.GLFW_PRESS) {
+        if (!game.isLevelWon() && event.getAction() == GLFW.GLFW_PRESS) {
             switch (event.getKey()) {
 //            case GLFW.GLFW_KEY_W:
                 case GLFW.GLFW_KEY_UP:
@@ -101,18 +102,21 @@ public class Amaze {
                 case GLFW.GLFW_KEY_RIGHT:
                     game.moveRight();
                     break;
-                case GLFW.GLFW_KEY_Z:
-                    game.resetLevel();
-                    break;
+//                case GLFW.GLFW_KEY_Z:
+//                    game.resetLevel();
+//                    break;
                 case GLFW.GLFW_KEY_R:
                     game.reset();
+                    break;
             }
         }
     }
 
     @SubscribeEvent
     public void onPlayerJoin(final PlayerEvent.PlayerLoggedInEvent event) {
-        event.getPlayer().teleportTo(0, 79, 0);
+        PlayerEntity playerEntity = event.getPlayer();
+        playerEntity.teleportTo(0, 79, 0);
+        game.addPlayer(Objects.requireNonNull(playerEntity.getServer()).getPlayerList().getPlayer(playerEntity.getUUID()));
     }
 
     @SubscribeEvent
