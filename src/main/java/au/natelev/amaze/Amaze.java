@@ -115,7 +115,7 @@ public class Amaze {
     @SubscribeEvent
     public void onPlayerJoin(final PlayerEvent.PlayerLoggedInEvent event) {
         PlayerEntity playerEntity = event.getPlayer();
-        playerEntity.teleportTo(0, 79, 0);
+        playerEntity.teleportTo(0, 79, -5);
         game.addPlayer(Objects.requireNonNull(playerEntity.getServer()).getPlayerList().getPlayer(playerEntity.getUUID()));
     }
 
