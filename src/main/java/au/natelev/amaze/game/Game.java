@@ -33,9 +33,10 @@ public class Game {
         this.serverWorld = server.overworld();
         this.ball = new Ball(server.overworld());
         this.bossBar = new ServerBossInfo(
-                new StringTextComponent("Level " + Integer.toString(currLevelIndex + 1)),
+                new StringTextComponent("Level " + (currLevelIndex + 1)),
                 BossInfo.Color.BLUE, BossInfo.Overlay.byName("Level"));
         bossBar.setVisible(true);
+        buildWalls();
         initLevels(levels);
         setLevel(server.overworld(), getLevelBlock(server.overworld()));
     }
@@ -45,7 +46,7 @@ public class Game {
     }
 
     private void bossBarSetLevel(int levelIndex) {
-        bossBar.setName(new StringTextComponent("Level " + Integer.toString(levelIndex + 1)));
+        bossBar.setName(new StringTextComponent("Level " + (levelIndex + 1)));
     }
 
     private void initLevels(List<Level> levels) {
@@ -64,8 +65,6 @@ public class Game {
         this.currLevelIndex = levelIndex;
         bossBarSetLevel(levelIndex);
         int prevHeight = 50, prevWidth = 50;
-        int[] metadata = LevelData.levelMetadata[levelIndex];
-        int[][] map = LevelData.getLevelMap(levelIndex);
         Level level = levels.get(levelIndex);
         currLevel = level;
         level.buildMap(prevHeight, prevWidth);
@@ -114,6 +113,52 @@ public class Game {
         if (currLevel.isFinished()) {
             Thread thread = new Thread(this::nextLevel);
             thread.start();
+        }
+    }
+
+    private void buildWalls() {
+        int prevHeight = 50;
+        int prevWidth = 50;
+        BlockPos origin = new BlockPos(gameOrigin.getX() - prevWidth/2, gameOrigin.getY(), gameOrigin.getZ() - prevHeight/2);
+        for (int count = 0; count < 40; count++) {
+            BlockPos currPos = origin.offset(0, count, 0);
+            for (int i = 0; i < prevHeight; i++) {
+                serverWorld.setBlockAndUpdate(currPos.offset(0, 0, i), Blocks.WHITE_CONCRETE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(prevWidth, 0, i), Blocks.WHITE_CONCRETE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(i, 0, 0), Blocks.WHITE_CONCRETE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(i, 0, prevHeight), Blocks.WHITE_CONCRETE.defaultBlockState());
+            }
+            if (count < 17 || count > 22) {
+                int temp = count;
+                count = ((count % 23) % 12);
+                if ((temp % 23) < 12) {
+                    serverWorld.setBlockAndUpdate(currPos.offset(0, 0, (count+prevWidth)/2), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset(prevWidth, 0, (count+prevWidth)/2), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset((count+prevWidth)/2, 0, 0), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset((count+prevWidth)/2, 0, prevHeight), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset(0, 0, -(1+count-prevWidth)/2), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset(prevWidth, 0, -(1+count-prevWidth)/2), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset(-(1+count-prevWidth)/2, 0, 0), Blocks.GLOWSTONE.defaultBlockState());
+                    serverWorld.setBlockAndUpdate(currPos.offset(-(1+count-prevWidth)/2, 0, prevHeight), Blocks.GLOWSTONE.defaultBlockState());
+                }
+                serverWorld.setBlockAndUpdate(currPos.offset(0, 0, prevWidth/2), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(prevWidth, 0, prevWidth/2), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(prevWidth/2, 0, 0), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(prevWidth/2, 0, prevHeight), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(0, 0, -1+prevWidth/2), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(prevWidth, 0, -1+prevWidth/2), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(-1+prevWidth/2, 0, 0), Blocks.GLOWSTONE.defaultBlockState());
+                serverWorld.setBlockAndUpdate(currPos.offset(-1+prevWidth/2, 0, prevHeight), Blocks.GLOWSTONE.defaultBlockState());
+                count = temp;
+            }
+        }
+        BlockPos currPos = origin.offset(0, 40, 0);
+        for (int i = 0; i < prevHeight; i++) {
+            for (int j = 0; j < prevWidth; j++) {
+                serverWorld.setBlockAndUpdate(currPos, Blocks.GLASS.defaultBlockState());
+                currPos = currPos.offset(0, 0, 1);
+            }
+            currPos = currPos.offset(1, 0, origin.getZ() - currPos.getZ());
         }
     }
 

@@ -29,11 +29,6 @@ public class Level {
 
 
 
-    protected int getHeight() { return this.height; }
-    protected int getWidth() { return this.width; }
-
-
-
     protected void paint(BlockPos blockPos) {
         unpaintedTiles.remove(blockPos);
     }
