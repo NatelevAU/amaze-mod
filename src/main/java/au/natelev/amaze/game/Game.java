@@ -1,10 +1,8 @@
 package au.natelev.amaze.game;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.BossInfo;
@@ -24,7 +22,7 @@ public class Game {
     private int currLevelIndex = 0;
     private boolean wonLevel = false;
 
-    private final BlockPos gameOrigin = new BlockPos(0, 65, 0);
+    private final BlockPos gameOrigin = new BlockPos(0, 165, 0);
 
     protected static final int UP = 0;
     protected static final int DOWN = 1;
